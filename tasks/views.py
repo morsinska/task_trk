@@ -91,7 +91,16 @@ class CommentDeleteView(DeleteView):
 
 class CommentLikeView(LoginRequiredMixin, View):
     def post(self, request, pk):
-        return redirect('tasks:task_list')
+        comment = get_object_or_404(models.Comment, pk=pk)
+        # Проверяем, ставил ли этот юзер уже лайк
+        like = models.Like.objects.filter(comment=comment, user=request.user)
+
+        if like.exists():
+            like.delete()  # Если лайк есть — убираем
+        else:
+            models.Like.objects.create(comment=comment, user=request.user)  # Если нет — создаем
+
+        return redirect('tasks:task_detail', pk=comment.task.pk)
 
 
 class TaskCompleteView(LoginRequiredMixin, View):

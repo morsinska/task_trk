@@ -40,6 +40,9 @@ class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def total_likes(self):
+        # Используем имя из related_name модели Like
+        return self.likes.count()
 
     def get_absolute_url(self):
         return self.task.get_absolute_url()
