@@ -1,11 +1,40 @@
 {% extends 'base.html' %}
+
 {% block content %}
-    <div class="task-item" style="max-width: 400px; margin: 0 auto;">
-        <h2 style="color: var(--gs-green); font-size: 14px;">НОВЕ ЗАВДАННЯ</h2>
+<div class="forum-category" style="max-width: 750px; margin: 20px auto;">
+    <div class="forum-header">
+        {% if object %} EDIT THREAD / РЕДАГУВАТИ {% else %} POST NEW THREAD / НОВА ТЕМА {% endif %}
+    </div>
+
+    <div class="forum-content" style="background: #141414; padding: 25px;">
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="gs-btn">СТВОРИТИ</button>
+
+            <!-- Заголовок темы -->
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #666; font-size: 10px; text-transform: uppercase; margin-bottom: 5px;">Thread Title</label>
+                <input type="text" name="title" value="{{ form.title.value|default:'' }}" required placeholder="Назва вашої теми..."
+                       style="width: 100%; background: #0c0c0c; border: 1px solid #222; color: #fff; padding: 10px; outline: none; box-sizing: border-box; font-size: 13px;">
+            </div>
+
+            <!-- Текст темы -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: #666; font-size: 10px; text-transform: uppercase; margin-bottom: 5px;">Message</label>
+                <textarea name="description" required placeholder="Напишіть щось..."
+                          style="width: 100%; height: 250px; background: #0c0c0c; border: 1px solid #222; color: #fff; padding: 12px; outline: none; box-sizing: border-box; font-family: Verdana; font-size: 12px; line-height: 1.5;">{{ form.description.value|default:'' }}</textarea>
+            </div>
+
+            <!-- Скрытые поля, чтобы база не ругалась -->
+            <input type="hidden" name="priority" value="low">
+            <input type="hidden" name="status" value="todo">
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #222; padding-top: 15px;">
+                <a href="{% url 'tasks:task_list' %}" class="action-btn" style="padding: 5px 15px;">Cancel</a>
+                <button type="submit" class="action-btn" style="background: var(--accent); color: #000; padding: 6px 25px; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase;">
+                    {% if object %} Update Thread {% else %} Post Thread {% endif %}
+                </button>
+            </div>
         </form>
     </div>
+</div>
 {% endblock %}

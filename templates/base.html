@@ -137,8 +137,25 @@
         <!-- Навигация -->
         <div class="forum-nav">
             <a href="{% url 'tasks:task_list' %}">Index</a>
-            <a href="{% url 'tasks:register' %}">Register</a>
-            <a href="{% url 'tasks:login' %}">Login</a>
+
+            {% if user.is_authenticated %}
+                <!-- Если залогинен — показываем Logout -->
+                <span style="color: #444; font-size: 10px;">|</span>
+
+                <!-- В новых версиях Django Logout лучше делать через форму, чтобы не было ошибок -->
+                <form action="{% url 'tasks:logout' %}" method="post" style="display: inline; margin: 0; padding: 0;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: #aaa; font-size: 10px; cursor: pointer; font-family: 'Verdana'; text-transform: capitalize; padding: 0;">Logout</button>
+                </form>
+
+                <span style="color: var(--accent); font-size: 10px; margin-left: 10px;">
+                    Welcome, {{ user.username }}
+                </span>
+            {% else %}
+                <!-- Если гость — показываем Login и Register -->
+                <a href="{% url 'tasks:register' %}">Register</a>
+                <a href="{% url 'tasks:login' %}">Login</a>
+            {% endif %}
         </div>
 
 

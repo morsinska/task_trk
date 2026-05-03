@@ -6,6 +6,7 @@ from . import models
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 
 
 class TaskListView(ListView):
@@ -58,16 +59,35 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
 
 
 # Заглушки для URL-ов, чтобы сервер не падал
-class RegisterView(CreateView):
-    form_class = UserCreationForm
+class RegisterView(View):
     template_name = "tasks/register.html"
-    success_url = reverse_lazy("tasks:task_list")
 
-    def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        return redirect("tasks:task_list")
+    def get(self, request):
+        return render(request, self.template_name)
 
+    def post(self, request):
+        # Получаем данные из нашей новой формы
+        u_name = request.POST.get('username')
+        p_word = request.POST.get('password')
+        p_conf = request.POST.get('password_confirm')
+        invite = request.POST.get('invite_code')
+
+        # 1. Проверяем инвайт
+        if invite != "skeet":
+            return render(request, self.template_name, {'error': 'Invalid invite code'})
+
+        # 2. Проверяем совпадение паролей
+        if p_word != p_conf:
+            return render(request, self.template_name, {'error': 'Passwords do not match'})
+
+        # 3. Проверяем, не занят ли ник
+        if User.objects.filter(username=u_name).exists():
+            return render(request, self.template_name, {'error': 'Username already taken'})
+
+        # 4. Создаем юзера
+        user = User.objects.create_user(username=u_name, password=p_word)
+        login(request, user)
+        return redirect('tasks:task_list')
 
 class CustomLoginView(LoginView):
     template_name = "tasks/login.html"
