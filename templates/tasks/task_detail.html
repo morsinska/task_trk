@@ -36,18 +36,20 @@
 
     <!-- 2. ОТВЕТЫ (Исправлено на comment_set и content) -->
     <!-- ВЫВОД КОММЕНТОВ -->
-    {% for comment in object.comment_set.all %}
+    <!-- Теперь task.comments.all будет работать благодаря related_name -->
+    {% for comment in task.comments.all %}
     <div class="forum-category" style="margin-top: 5px;">
         <div class="forum-header" style="background: #181818;">
-            <span style="color: #888;">{{ comment.author.username|default:"ANON" }}</span>
+            <span style="color: #888;">{{ comment.author.username }}</span>
             <span style="color: #444; font-size: 9px; margin-left: 10px;">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
         </div>
         <div class="forum-content" style="padding: 15px 25px; background: #141414;">
+            <!-- У тебя в модели поле называется content, а не text -->
             <div style="color: #bbb; font-size: 11px;">{{ comment.content }}</div>
         </div>
     </div>
     {% empty %}
-    <div class="forum-content" style="color: #444; font-size: 10px; text-align: center;">No replies yet.</div>
+        <div style="color: #333; text-align: center; padding: 10px; font-size: 10px;">No replies yet.</div>
     {% endfor %}
 
 
