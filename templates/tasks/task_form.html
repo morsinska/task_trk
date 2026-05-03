@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="container mt-3">
-    <h2>{{ view.title }}</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Зберегти</button>
-    </form>
-</div>
+    <div class="task-item" style="max-width: 400px; margin: 0 auto;">
+        <h2 style="color: var(--gs-green); font-size: 14px;">НОВЕ ЗАВДАННЯ</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="gs-btn">СТВОРИТИ</button>
+        </form>
+    </div>
 {% endblock %}

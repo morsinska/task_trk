@@ -30,30 +30,34 @@ class TaskListView(ListView):
         context["form"] = TaskFilterForm(self.request.GET)
         return context
 
-class TaskDetailView(LoginRequiredMixin,DetailView):
+
+class TaskDetailView(LoginRequiredMixin, DetailView):
     model = models.Task
     context_object_name = "task"
     template_name = "tasks/task_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comment_form'] = CommentForm()  # Додаємо порожню форму коментаря в контекст
+        context['comment_form'] = CommentForm()
         return context
 
     def post(self, request, *args, **kwargs):
+        # Получаем объект задачи сразу, он нам нужен в любом случае
+        self.object = self.get_object()
         comment_form = CommentForm(request.POST, request.FILES)
-        if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
+
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.author = request.user
-            comment.task = self.get_object()
+            comment.task = self.object
             comment.save()
-            return redirect(to='tasks:task_detail', pk=comment.task.pk)
-        else:
-            # Тут можна обробити випадок з невалідною формою
-            pass
+            # Если всё ок — редиректим на эту же страницу (чтобы очистить форму)
+            return redirect('tasks:task_detail', pk=self.object.pk)
 
+        # Если форма НЕ валидна — возвращаем ту же страницу с той же формой (с ошибками)
+        context = self.get_context_data(object=self.object)
+        context['comment_form'] = comment_form  # Передаем форму с ошибками обратно
+        return self.render_to_response(context)
 
 
 class TaskCreateView(LoginRequiredMixin,CreateView):
@@ -64,7 +68,7 @@ class TaskCreateView(LoginRequiredMixin,CreateView):
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
-        return super().from_valid(form)
+        return super().form_valid(form)
 
 
 class TaskCompleteView(LoginRequiredMixin,UserIsOwnerMixin, View):

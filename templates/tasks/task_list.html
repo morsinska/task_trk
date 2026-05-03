@@ -1,23 +1,65 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div style="margin-bottom: 15px;">
-        <a href="/create/" class="gs-btn">Додати завдання</a>
+<div class="forum-category">
+    <!-- Шапка как в Gamesense -->
+    <div class="forum-header">
+        <div style="display: flex; justify-content: space-between;">
+            <span>Main Forum</span>
+            <span>Topics</span>
+        </div>
     </div>
 
-    <div class="task-list">
-        {% for task in tasks %}
-        <div class="task-item">
-            <div class="task-info">
-                <b>{{ task.title }}</b>
-                <div class="task-meta">
-                    STATUS: <span>{{ task.status }}</span> | PRIORITY: {{ task.priority }}
-                </div>
-            </div>
-            <a href="/update/{{ task.id }}/" class="btn-edit">ИЗМЕНИТЬ</a>
-        </div>
-        {% empty %}
-            <div class="task-item">Задач пока нет...</div>
-        {% endfor %}
+    <div class="forum-content" style="padding: 0;">
+        <table style="width: 100%; border-collapse: collapse; background: #141414;">
+            <thead>
+                <tr style="background: #111; color: #555; font-size: 9px; text-transform: uppercase;">
+                    <th style="padding: 5px 15px; text-align: left; border-bottom: 1px solid #000;">Forum</th>
+                    <th style="padding: 5px 15px; text-align: center; border-bottom: 1px solid #000; width: 50px;">Stats</th>
+                    <th style="padding: 5px 15px; text-align: right; border-bottom: 1px solid #000; width: 150px;">Last Post</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr style="border-bottom: 1px solid #1a1a1a;">
+                    <!-- Иконка папки слева (фишка форумов) -->
+                    <td style="padding: 10px 15px;">
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 20px; height: 20px; background: #222; border: 1px solid #333; margin-right: 15px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: bold;">
+                                !
+                            </div>
+                            <div>
+                                <a href="{% url 'tasks:task_detail' task.pk %}" style="color: #fff; text-decoration: none; font-weight: bold; font-size: 12px;">
+                                    {{ task.title }}
+                                </a>
+                                <div style="color: #555; font-size: 10px; margin-top: 2px;">
+                                    Started by <span style="color: #888;">{{ task.author|default:"Admin" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <!-- Статистика (можешь потом прикрутить счетчик комментов) -->
+                    <td style="text-align: center; color: #666; font-size: 10px;">
+                        1 / 14
+                    </td>
+                    <!-- Последний ответ -->
+                    <td style="text-align: right; padding-right: 15px;">
+                        <div style="color: #aaa; font-size: 10px;">Today, 12:45</div>
+                        <div style="color: #555; font-size: 9px;">by <span style="color: var(--accent);">{{ task.author|default:"User" }}</span></div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" style="padding: 20px; text-align: center; color: #444;">No forum categories found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+</div>
+
+<div style="margin-top: 10px; display: flex; justify-content: flex-end;"> <!-- Сдвинем вправо, как на форумах -->
+    <a href="{% url 'tasks:task_create' %}" class="action-btn" style="background: var(--bg-panel); padding: 4px 12px; border: 1px solid #000; outline: 1px solid #252525; color: var(--accent);">
+        + POST NEW THREAD
+    </a>
+</div>
+
 {% endblock %}

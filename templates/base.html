@@ -3,114 +3,162 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>GAMESENSE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}gamesense{% endblock %}</title>
+
     <style>
-        /* Цвета GameSense */
+        /* Цветовая палитра Skeet/GameSense */
         :root {
             --bg-body: #0c0c0c;
             --bg-panel: #141414;
+            --bg-header: #1a1a1a;
             --accent: #a5e12d;
-            --border: #222222;
-            --text: #d1d1d1;
+            --border-outer: #000000;
+            --border-inner: #252525;
+            --text-main: #d1d1d1;
+            --text-muted: #888;
         }
 
         body {
             background-color: var(--bg-body);
-            color: var(--text);
-            font-family: 'Tahoma', sans-serif;
+            color: var(--text-main);
+            font-family: 'Verdana', 'Tahoma', sans-serif;
             font-size: 11px;
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: center;
-        }
-
-        /* Главный контейнер */
-        .wrapper {
-            width: 100%;
-            max-width: 600px;
-        }
-
-        /* Шапка */
-        .header {
-            color: var(--accent);
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Кнопка */
-        .gs-btn {
-            background-color: var(--accent);
-            color: #000;
-            border: none;
-            padding: 3px 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 10px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        /* Список задач */
-        .task-list {
-            display: flex;
             flex-direction: column;
-            gap: 5px;
-        }
-
-        /* Сама карточка задачи */
-        .task-item {
-            background-color: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-left: 2px solid var(--accent);
-            padding: 8px 12px;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
         }
 
-        .task-info b {
-            color: #fff;
-            display: block;
-            margin-bottom: 2px;
+        /* Главный контейнер форума */
+        .forum-container {
+            width: 100%;
+            max-width: 850px;
         }
 
-        .task-meta {
-            color: #777;
+        /* Навигационная панель (верхняя) */
+        .forum-nav {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-outer);
+            outline: 1px solid var(--border-inner);
+            padding: 8px 15px;
+            margin-bottom: 5px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .forum-nav a {
+            color: #aaa;
+            text-decoration: none;
+            text-transform: capitalize;
             font-size: 10px;
         }
 
-        .task-meta span {
+        .forum-nav a:hover {
             color: var(--accent);
         }
 
-        .btn-edit {
+        /* Инфо-панель (статус логина) */
+        .info-bar {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-outer);
+            outline: 1px solid var(--border-inner);
+            padding: 6px 15px;
+            margin-bottom: 15px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Основные блоки (категории форума) */
+        .forum-category {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-outer);
+            outline: 1px solid var(--border-inner);
+            margin-bottom: 15px;
+        }
+
+        /* Шапка блока с градиентом */
+        .forum-header {
+            background: linear-gradient(to bottom, #222, #181818);
+            padding: 6px 12px;
+            border-bottom: 1px solid var(--border-outer);
+            color: var(--accent);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        .forum-content {
+            padding: 10px 15px;
+        }
+
+        /* Стили для кнопок и ссылок действий */
+        .action-btn {
             color: #555;
             text-decoration: none;
-            border: 1px solid #333;
+            border: 1px solid #222;
             padding: 2px 5px;
+            background: #111;
+            font-size: 9px;
+            text-transform: uppercase;
         }
 
-        .btn-edit:hover {
+        .action-btn:hover {
             color: var(--accent);
             border-color: var(--accent);
+        }
+
+        /* Футер */
+        .forum-footer {
+            margin-top: 10px;
+            color: #444;
+            font-size: 10px;
+            text-align: left;
+            width: 100%;
+        }
+
+        /* Убираем лишние отступы у заголовков в контенте */
+        h1, h2, h3 {
+            margin: 0;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="header">
-            <span>GAMESENSE / TASKS</span>
+
+    <div class="forum-container">
+        <!-- Логотип (просто текст как на скрине) -->
+        <div style="margin-bottom: 10px;">
+            <span style="color: var(--accent); font-weight: bold; font-size: 14px; letter-spacing: -1px;">gamesense</span>
         </div>
+
+        <!-- Навигация -->
+        <div class="forum-nav">
+            <a href="{% url 'tasks:task_list' %}">Index</a>
+            <a href="{% url 'tasks:register' %}">Register</a>
+            <a href="{% url 'tasks:login' %}">Login</a>
+        </div>
+
+
+        <!-- Инфо-панель -->
+        <div class="info-bar">
+            {% if user.is_authenticated %}
+                Logged in as: <span style="color: #fff;">{{ user.username }}</span>
+            {% else %}
+                You are not logged in.
+            {% endif %}
+        </div>
+
+        <!-- Основной контент -->
         {% block content %}{% endblock %}
+
+        <!-- Подвал -->
+        <div class="forum-footer">
+            GameSense 2026
+        </div>
     </div>
+
 </body>
 </html>
