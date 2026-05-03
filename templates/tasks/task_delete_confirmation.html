@@ -1,14 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h2>Видалення завдання</h2>
-    <p>Ви впевнені, що хочете видалити завдання "{{ object.title }}"?</p>
+<div class="forum-category" style="max-width: 500px; margin: 50px auto;">
+    <div class="forum-header">Видалення теми / Delete Thread</div>
+    <div class="forum-content" style="text-align: center; background: #141414; padding: 30px;">
+        <p style="font-size: 13px; color: #fff; margin-bottom: 20px;">
+            Ви впевнені, що хочете видалити тему "<b>{{ object.title }}</b>"?
+        </p>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Так, видалити</button>
-        <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">Ні, повернутися до списку завдань</a>
-    </form>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="action-btn" style="background: #622; color: #fff; border: none; padding: 5px 25px; cursor: pointer; font-weight: bold;">
+                ТАК, ВИДАЛИТИ
+            </button>
+            <a href="{% url 'tasks:task_detail' object.pk %}" class="action-btn" style="margin-left: 10px; padding: 5px 25px; display: inline-block;">
+                СКАСУВАТИ
+            </a>
+        </form>
+    </div>
 </div>
 {% endblock %}
