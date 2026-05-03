@@ -34,14 +34,12 @@ class Task(models.Model):
 
 
 class Comment(models.Model):
-    # Добавь related_name='comments' в конец этой строки:
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def total_likes(self):
-        # Используем имя из related_name модели Like
         return self.likes.count()
 
     def get_absolute_url(self):
@@ -54,4 +52,4 @@ class Like(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('comment', 'user')  # Обеспечивает уникальность лайков
+        unique_together = ('comment', 'user')

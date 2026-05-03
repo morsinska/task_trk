@@ -54,37 +54,36 @@ class TaskUpdateView(LoginRequiredMixin, UpdateView):
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = models.Task
-    template_name = "tasks/task_delete_confirmation.html"  # Твое название файла
+    template_name = "tasks/task_delete_confirmation.html"
     success_url = reverse_lazy("tasks:task_list")
 
 
-# Заглушки для URL-ов, чтобы сервер не падал
 class RegisterView(View):
     template_name = "tasks/register.html"
 
     def get(self, request):
         return render(request, self.template_name)
 
+
     def post(self, request):
-        # Получаем данные из нашей новой формы
         u_name = request.POST.get('username')
         p_word = request.POST.get('password')
         p_conf = request.POST.get('password_confirm')
         invite = request.POST.get('invite_code')
 
-        # 1. Проверяем инвайт
+
         if invite != "skeet":
             return render(request, self.template_name, {'error': 'Invalid invite code'})
 
-        # 2. Проверяем совпадение паролей
+
         if p_word != p_conf:
             return render(request, self.template_name, {'error': 'Passwords do not match'})
 
-        # 3. Проверяем, не занят ли ник
+
         if User.objects.filter(username=u_name).exists():
             return render(request, self.template_name, {'error': 'Username already taken'})
 
-        # 4. Создаем юзера
+
         user = User.objects.create_user(username=u_name, password=p_word)
         login(request, user)
         return redirect('tasks:task_list')
